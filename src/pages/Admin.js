@@ -16,7 +16,6 @@ const Admin = () => {
     const [uploading, setUploading] = useState(false);
     const [learnTitle, setLearnTitle] = useState('');
     const [learnDescription, setLearnDescription] = useState('');
-    const [learnDemo, setLearnDemo] = useState('');
 
 
     useEffect(() => {
@@ -69,7 +68,6 @@ const Admin = () => {
             const docRef = await addDoc(collection(db, "learn"), {
                 title: learnTitle,
                 description: learnDescription,
-                demo: learnDemo
             });
             console.log("Document written with ID: ", docRef.id);
 

@@ -4,7 +4,7 @@ import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import ReactMarkdown from 'react-markdown';
 import remarkToc from 'remark-toc';
-import { ref, push, set, onValue } from 'firebase/database'; // Import necessary functions from Firebase Realtime Database
+import { ref, push, onValue } from 'firebase/database'; // Import necessary functions from Firebase Realtime Database
 import { database } from '../firebase';
 
 const ViewLearn = () => {
