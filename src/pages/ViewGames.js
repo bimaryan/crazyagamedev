@@ -4,6 +4,8 @@ import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import { ref, push, onValue } from 'firebase/database';
 import { database } from '../firebase';
+import ReactMarkdown from 'react-markdown';
+import remarkToc from 'remark-toc';
 
 const ViewGames = () => {
     const { id } = useParams();
@@ -70,7 +72,8 @@ const ViewGames = () => {
 
     if (!game) {
         return <div className='container'>
-            <div className='card'>
+            <a href="/games" className="nav-link"><i className="bi bi-arrow-left-square"></i> Back</a>
+            <div className='card mt-3'>
                 <div className='card-body'>
                     <div className='card-text'>
                         Game not found.
@@ -86,7 +89,7 @@ const ViewGames = () => {
             <div className='card mt-3'>
                 <div className='card-header text-center'>{game.title}</div>
                 <div className='card-body'>
-                    <div className='card-text'><img src={game.image} alt={game.title} className="img-fluid mb-3" /></div>
+                    <div className='card-text text-center'><img src={game.image} alt={game.title} className="img-fluid mb-3" /></div>
                 </div>
             </div>
             <div className='card mt-3'>
@@ -107,7 +110,13 @@ const ViewGames = () => {
             <div className='card mt-3'>
                 <div className='card-header'>Description</div>
                 <div className='card-body'>
-                    <div className='card-text'>{game.description}</div>
+                    <div className='card-text'>
+                        <ReactMarkdown
+                            remarkPlugins={[remarkToc]} // Add remark-toc plugin
+                            toc
+                            children={game.description} // Pass the Markdown content
+                        />
+                    </div>
                 </div>
             </div>
             <div className='card mt-3'>

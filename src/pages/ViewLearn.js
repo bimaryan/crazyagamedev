@@ -72,7 +72,8 @@ const ViewLearn = () => {
 
     if (!learn) {
         return <div className='container'>
-            <div className='card'>
+            <a href="/learn" className="nav-link"><i className="bi bi-arrow-left-square"></i> Back</a>
+            <div className='card mt-3'>
                 <div className='card-body'>
                     <div className='card-text'>
                         Learning resource not found.

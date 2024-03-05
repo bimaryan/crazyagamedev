@@ -10,6 +10,7 @@ import Learn from './pages/Learn';
 import Notfound from './pages/Notfound';
 import ViewGames from './pages/ViewGames';
 import ViewLearn from './pages/ViewLearn';
+import ResetPassword from './pages/ResetPassword';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path="/admin" element={<Admin/>} />
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
+        <Route path='/reset' element={<ResetPassword/>}/>
         <Route path="/games" element={<Games />} />
         <Route path="/learn" element={<Learn />} />
         <Route path="/learn/:id" element={<ViewLearn />} />

@@ -61,6 +61,7 @@ const Login = () => {
                                 </div>
                                 <button type="submit" className="btn btn-primary w-100">Login</button>
                             </form>
+                            <a className="btn btn-danger w-100 mt-2" href="/reset">Reset Password</a>
                             {error && <p className="mt-3 text-danger">{error}</p>}
                         </div>
                     </div>
