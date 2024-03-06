@@ -30,7 +30,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path='/Community/login' element={<Sign />} />
           <Route path='/reset' element={<ResetPassword />} />
-          <Route path='/new_password' element={<Verify />} />
+          <Route path='/new_password/__/auth/action' element={<Verify />} />
           <Route path='/community/reset' element={<ResetCommunity />} />
           <Route path="/games" element={<Games />} />
           <Route path="/learn" element={<Learn />} />
