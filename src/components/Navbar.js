@@ -89,6 +89,9 @@ const Navbar = () => {
                 </button>
                 <div className="collapse navbar-collapse" id="navbarNav">
                     <ul className="navbar-nav">
+                        <li>
+                            <a className="nav-link" href="/community">Community</a>
+                        </li>
                         <li className="nav-item">
                             {renderAuthButton()}
                         </li>

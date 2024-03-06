@@ -17,7 +17,6 @@ const Admin = () => {
     const [learnTitle, setLearnTitle] = useState('');
     const [learnDescription, setLearnDescription] = useState('');
 
-
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((user) => {
             setUser(user);
@@ -27,16 +26,19 @@ const Admin = () => {
         return () => unsubscribe();
     }, []);
 
-    const handleImageChange = (e) => {
-        setImage(e.target.files[0]);
-    };
+    // Redirect user to the community page if they logged in with Google
+    useEffect(() => {
+        if (user && user.providerData[0].providerId === 'google.com') {
+            window.location.href = '/community'; // Redirect to community page
+        }
+    }, [user]);
 
+    // Function to handle form submission for adding a game
     const handleSubmit = async (e) => {
         e.preventDefault();
         setUploading(true);
 
         try {
-
             const storageRef = ref(storage, `images/${image.name}`);
             await uploadBytes(storageRef, image);
 
@@ -48,7 +50,6 @@ const Admin = () => {
                 link,
                 description
             });
-            console.log("Document written with ID: ", docRef.id);
 
             setTitle('');
             setImage(null);
@@ -61,6 +62,7 @@ const Admin = () => {
         }
     };
 
+    // Function to handle form submission for adding a learning resource
     const handleLearnSubmit = async (e) => {
         e.preventDefault();
 
@@ -69,7 +71,6 @@ const Admin = () => {
                 title: learnTitle,
                 description: learnDescription,
             });
-            console.log("Document written with ID: ", docRef.id);
 
             // Reset the form after submission
             setLearnTitle('');
@@ -80,14 +81,17 @@ const Admin = () => {
     };
 
     if (loading) {
-        return <div className='container text-center'>
-            <div className="spinner-border" role="status">
-                <span className="visually-hidden">Loading...</span>
+        return (
+            <div className='container text-center'>
+                <div className="spinner-border" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                </div>
             </div>
-        </div>;
+        );
     }
 
-    if (!user) {
+    // Redirect non-admin users to the home page
+    if (!user || !user.email) {
         return <Navigate to="/" />;
     }
 
@@ -140,7 +144,7 @@ const Admin = () => {
                                     </div>
                                     <div className="mb-3">
                                         <label htmlFor="image" className="form-label">Image:</label>
-                                        <input type="file" className="form-control" id="image" onChange={handleImageChange} required />
+                                        <input type="file" className="form-control" id="image" onChange={(e) => setImage(e.target.files[0])} required />
                                     </div>
                                     <div className="mb-3">
                                         <label htmlFor="link" className="form-label">Link:</label>

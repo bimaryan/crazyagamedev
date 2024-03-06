@@ -15,13 +15,18 @@ const Login = () => {
         e.preventDefault();
 
         try {
+            // Sign in with email and password
             await signInWithEmailAndPassword(auth, email, password);
             // Get user role after successful login
             const user = auth.currentUser;
             if (user) {
-                // Redirect based on user role
-                if (user.email) {
+                // Check if the user signed in with email/password
+                if (user.providerData[0].providerId === 'password') {
+                    // Redirect to admin page
                     navigate('/admin');
+                } else {
+                    // If user signed in with Google, display an error message
+                    setError('Access denied. Please sign in using email and password.');
                 }
             }
         } catch (error) {
