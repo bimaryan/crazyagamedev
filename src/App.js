@@ -14,7 +14,8 @@ import ViewLearn from './pages/ViewLearn';
 import ResetPassword from './pages/ResetPassword';
 import Community from './pages/Community';
 import ResetCommunity from './pages/ResetCommunity';
-import Verify from './pages/Verify';
+import Profil from './pages/Profil';
+import Post from './pages/Post';
 
 function App() {
   return (
@@ -30,13 +31,14 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path='/Community/login' element={<Sign />} />
           <Route path='/reset' element={<ResetPassword />} />
-          <Route path='/new_password/__/auth/action' element={<Verify />} />
           <Route path='/community/reset' element={<ResetCommunity />} />
           <Route path="/games" element={<Games />} />
           <Route path="/learn" element={<Learn />} />
           <Route path="/learn/:id" element={<ViewLearn />} />
           <Route path="/games/:id" element={<ViewGames />} />
           <Route path='/community' element={<Community />} />
+          <Route path='/community/profil' element={<Profil />} />
+          <Route path='/community/post' element={<Post />} />
           <Route path="*" element={<Notfound />} />
         </Routes>
       </div>

@@ -1,0 +1,17 @@
+.card-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .card {
+    width: 50%; /* Lebar card di tampilan desktop */
+  }
+  
+  @media (max-width: 768px) {
+    .card {
+      width: 85%; /* Lebar card di tampilan mobile */
+    }
+  }
+  
