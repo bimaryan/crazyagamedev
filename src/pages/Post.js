@@ -63,8 +63,7 @@ const Post = () => {
                             <input type="file" className="form-control" id="image" onChange={handleImageChange} accept="image/*" />
                         </div> */}
                         <div className="mb-3">
-                            {/* <textarea className="form-control" id="text" rows="3" required></textarea> */}
-                            <textarea name="pesan" id="text" class="form-control border" value={text} onChange={(e) => setText(e.target.value)} required style={{ resize: "none" }}></textarea>
+                            <textarea name="pesan" id="text" className="form-control border" value={text} onChange={(e) => setText(e.target.value)} required maxLength={200} style={{ resize: "none" }} rows={6}></textarea>
                         </div>
                         <button type="submit" className="btn btn-primary w-100" disabled={uploading}>{uploading ? 'Uploading...' : 'Post'}</button>
                     </center>

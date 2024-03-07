@@ -1,4 +1,3 @@
-import './App.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Login from './pages/Login';
 import Sign from './pages/Sign';
@@ -16,6 +15,7 @@ import Community from './pages/Community';
 import ResetCommunity from './pages/ResetCommunity';
 import Profil from './pages/Profil';
 import Post from './pages/Post';
+import ViewPost from './pages/ViewPost';
 
 function App() {
   return (
@@ -39,6 +39,7 @@ function App() {
           <Route path='/community' element={<Community />} />
           <Route path='/community/profil' element={<Profil />} />
           <Route path='/community/post' element={<Post />} />
+          <Route path="/community/view/:id" element={<ViewPost />} />
           <Route path="*" element={<Notfound />} />
         </Routes>
       </div>
