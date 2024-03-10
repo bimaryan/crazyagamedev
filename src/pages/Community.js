@@ -91,7 +91,7 @@ const Community = () => {
 
     // Redirect to the login page if user is not logged in or not using Google login
     if (!user || user.providerData[0].providerId !== 'google.com') {
-        return <Navigate to="/community/signup" />;
+        return <Navigate to="/community/signin" />;
     }
 
     return (
