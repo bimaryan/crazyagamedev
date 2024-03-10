@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
 import { collection, addDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { db, storage, auth } from '../firebase'; // Import 'auth' from your firebase config
+import { db, storage, auth } from '../firebase';
+import { Link } from 'react-router-dom';
 
 const Post = () => {
     const [text, setText] = useState('');
     const [image, setImage] = useState(null);
     const [uploading, setUploading] = useState(false);
 
-    const handleImageChange = (e) => {
-        setImage(e.target.files[0]);
-    };
+    // const handleImageChange = (e) => {
+    //     setImage(e.target.files[0]);
+    // };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -50,14 +51,25 @@ const Post = () => {
 
     return (
         <div className="container">
-            <div className='mb-3'>
-                <h5 class="fw-bold">Your Post</h5>
-            </div>
+            <ul className="nav nav-pills nav-fill gap-2 p-1 small rounded-5 shadow mb-3" id="pillNav2" role="tablist">
+                <li className="nav-item" role="presentation">
+                    <Link to="/community" className="nav-link rounded-5">Home</Link>
+                </li>
+                <li className="nav-item" role="presentation">
+                    <Link to="/community/profil" className="nav-link rounded-5">Profil</Link>
+                </li>
+                <li className="nav-item" role="presentation">
+                    <Link to="/community/post" className="nav-link rounded-5">Upload Post</Link>
+                </li>
+            </ul>
+            {/* <div className='mb-3'>
+                <h5 className="fw-bold">Your Post</h5>
+            </div> */}
             <center>
-                <a class="nav-link disabled btn btn-secondary mb-3 push"><i class="fa-solid fa-circle-info"></i> Text kamu saat ini dibatasi 200 karakter</a>
+                <div className="nav-link disabled btn btn-secondary mb-3 push"><i className="fa-solid fa-circle-info"></i> Text kamu saat ini dibatasi 200 karakter</div>
             </center>
             <form onSubmit={handleSubmit}>
-                <div class="form-group">
+                <div className="form-group">
                     <center>
                         {/* <div className="mb-3">
                             <input type="file" className="form-control" id="image" onChange={handleImageChange} accept="image/*" />

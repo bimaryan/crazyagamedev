@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { collection, getDocs } from 'firebase/firestore';
 import { db, auth } from '../firebase';
-import { Navigate } from 'react-router-dom';
+import { Navigate, Link } from 'react-router-dom';
 import { ref, set, push, onValue } from 'firebase/database';
-import { Link } from 'react-router-dom'; // Import Link from react-router-dom
 import "../App.css"
 import { database } from '../firebase';
 
@@ -97,16 +96,25 @@ const Community = () => {
     return (
         <>
             <div className="container">
-            <a className='nav-link' href='/community/post'>Upload Post</a>
-                <h3 className='text-center mb-4'>CrazyGamedev Community</h3>
-                <div className='row justify-content-center'>
+                <ul className="nav nav-pills nav-fill gap-2 p-1 small rounded-5 shadow" id="pillNav2" role="tablist">
+                    <li className="nav-item" role="presentation">
+                        <Link to="/community" className="nav-link rounded-5">Home</Link>
+                    </li>
+                    <li className="nav-item" role="presentation">
+                        <Link to="/community/profil" className="nav-link rounded-5">Profil</Link>
+                    </li>
+                    <li className="nav-item" role="presentation">
+                        <Link to="/community/post" className="nav-link rounded-5">Upload Post</Link>
+                    </li>
+                </ul>
+                <div className='row justify-content-center mt-3'>
                     <div className='col-md-6'>
                         {posts.map((post) => (
                             <div key={post.id} className="card mb-3">
                                 <div className='card-header'>
                                     <div className='d-flex justify-content-between align-items-center'>
                                         <div>
-                                            <Link to={`/community/view/${post.id}`} className="nav-link card-title">{post.displayName}</Link>
+                                            <Link to={`/community/profil/${post.displayName}`} className="nav-link card-title">{post.displayName}</Link>
                                         </div>
                                         <div>
                                             <small className="nav-link text-muted">{new Date(post.createdAt?.seconds * 1000).toLocaleDateString()}</small>

@@ -14,9 +14,9 @@ import ViewLearn from './pages/ViewLearn';
 import ResetPassword from './pages/ResetPassword';
 import Community from './pages/Community';
 import ResetCommunity from './pages/ResetCommunity';
+import ViewProfile from './pages/ViewProfil';
 import Profil from './pages/Profil';
 import Post from './pages/Post';
-import ViewPost from './pages/ViewPost';
 
 function App() {
   return (
@@ -41,7 +41,7 @@ function App() {
           <Route path='/community' element={<Community />} />
           <Route path='/community/profil' element={<Profil />} />
           <Route path='/community/post' element={<Post />} />
-          <Route path="/community/view/:id" element={<ViewPost />} />
+          <Route path='/community/profil/:displayName' element={<ViewProfile/>}/>
           <Route path="*" element={<Notfound />} />
         </Routes>
       </div>
