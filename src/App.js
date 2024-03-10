@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Login from './pages/Login';
-import Sign from './pages/Sign';
+import SignUp from './pages/SignUp';
+import SignIn from './pages/SignIn';
 import Admin from './pages/Admin';
 import Home from './pages/Home';
 import Navbar from './components/Navbar';
@@ -29,7 +30,8 @@ function App() {
           <Route path="/admin" element={<Admin />} />
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
-          <Route path='/Community/login' element={<Sign />} />
+          <Route path='/Community/signup' element={<SignUp />} />
+          <Route path='/Community/signin' element={<SignIn />} />
           <Route path='/reset' element={<ResetPassword />} />
           <Route path='/community/reset' element={<ResetCommunity />} />
           <Route path="/games" element={<Games />} />

@@ -4,17 +4,16 @@ import { auth } from "../firebase";
 import { useNavigate } from "react-router-dom";
 import { FaGoogle } from "react-icons/fa";
 
-const Sign = () => {
+const SignIn = () => {
     const navigate = useNavigate();
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [setIsLoggedIn] = useState(false);
 
-    const handleSignInWithGoogle = async () => {
+    const handleSignInWithPopup = async () => {
         const provider = new GoogleAuthProvider();
         try {
             const result = await signInWithPopup(auth, provider);
-            // Redirect to community page after successful sign-in
             navigate("/community");
-            setIsLoggedIn(true); // Set isLoggedIn to true after successful sign-in
+            setIsLoggedIn(true);
         } catch (error) {
             console.error("Error signing in with Google:", error.message);
         }
@@ -29,16 +28,10 @@ const Sign = () => {
                 <div className="col-md-6">
                     <div className="card">
                         <div className="card-body">
-                            <h2 className="card-title text-center mb-4">Login</h2>
-                            {isLoggedIn ? (
-                                <button className="btn btn-success w-100" disabled>
-                                    Logged In
-                                </button>
-                            ) : (
-                                <button className="btn btn-primary w-100" onClick={handleSignInWithGoogle}>
-                                    <FaGoogle style={{ marginRight: "10px" }} /> Sign in with Google
-                                </button>
-                            )}
+                            <h2 className="card-title text-center mb-4">Sign In</h2>
+                            <button className="btn btn-primary w-100" onClick={handleSignInWithPopup}>
+                                <FaGoogle style={{ marginRight: "10px" }} /> Sign in with Google
+                            </button>
                             <a className="btn btn-danger w-100 mt-2" href="/community/reset">Reset Password</a>
                         </div>
                     </div>
@@ -48,4 +41,4 @@ const Sign = () => {
     );
 };
 
-export default Sign;
+export default SignIn;

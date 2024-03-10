@@ -91,48 +91,51 @@ const Community = () => {
 
     // Redirect to the login page if user is not logged in or not using Google login
     if (!user || user.providerData[0].providerId !== 'google.com') {
-        return <Navigate to="/community/login" />;
+        return <Navigate to="/community/signup" />;
     }
 
     return (
-        <div className="container">
-            <h3 className='text-center mb-4'>CrazyGamedev Community</h3>
-            <div className='row justify-content-center'>
-                <div className='col-md-6'>
-                    {posts.map((post) => (
-                        <div key={post.id} className="card mb-3">
-                            <div className='card-header'>
-                                <div className='d-flex justify-content-between align-items-center'>
-                                    <div>
-                                        <Link to={`/community/view/${post.id}`} className="nav-link card-title">{post.displayName}</Link>
+        <>
+            <div className="container">
+            <a className='nav-link' href='/community/post'>Upload Post</a>
+                <h3 className='text-center mb-4'>CrazyGamedev Community</h3>
+                <div className='row justify-content-center'>
+                    <div className='col-md-6'>
+                        {posts.map((post) => (
+                            <div key={post.id} className="card mb-3">
+                                <div className='card-header'>
+                                    <div className='d-flex justify-content-between align-items-center'>
+                                        <div>
+                                            <Link to={`/community/view/${post.id}`} className="nav-link card-title">{post.displayName}</Link>
+                                        </div>
+                                        <div>
+                                            <small className="nav-link text-muted">{new Date(post.createdAt?.seconds * 1000).toLocaleDateString()}</small>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <small className="nav-link text-muted">{new Date(post.createdAt?.seconds * 1000).toLocaleDateString()}</small>
+                                </div>
+                                <div className="card-body">
+                                    <p className="card-text">{post.text}</p>
+                                    {post.imageUrl && <img src={post.imageUrl} alt="Post" className="card-img-top" />}
+                                </div>
+                                <div className='card-footer'>
+                                    {comments && comments[post.id] && (
+                                        <ul className="list-group mb-2">
+                                            {Object.values(comments[post.id]).slice(0, 1).map((comment, index) => (
+                                                <li key={index} className="list-group-item">{comment.displayName}: {comment.text}</li>
+                                            ))}
+                                        </ul>
+                                    )}
+                                    <div className="d-flex">
+                                        <textarea className="form-control" value={commentText} onChange={(e) => setCommentText(e.target.value)} placeholder="Add a comment..." rows="1" style={{ resize: "none" }} required></textarea>
+                                        <button className="btn btn-primary" onClick={() => handleCommentSubmit(post.id)}><i className="bi bi-send"></i></button>
                                     </div>
                                 </div>
                             </div>
-                            <div className="card-body">
-                                <p className="card-text">{post.text}</p>
-                                {post.imageUrl && <img src={post.imageUrl} alt="Post" className="card-img-top" />}
-                            </div>
-                            <div className='card-footer'>
-                                {comments && comments[post.id] && (
-                                    <ul className="list-group mb-2">
-                                        {Object.values(comments[post.id]).slice(0, 1).map((comment, index) => (
-                                            <li key={index} className="list-group-item">{comment.displayName}: {comment.text}</li>
-                                        ))}
-                                    </ul>
-                                )}
-                                <div className="d-flex">
-                                    <textarea className="form-control" value={commentText} onChange={(e) => setCommentText(e.target.value)} placeholder="Add a comment..." rows="1" style={{ resize: "none" }} required></textarea>
-                                    <button className="btn btn-primary" onClick={() => handleCommentSubmit(post.id)}><i className="bi bi-send"></i></button>
-                                </div>
-                            </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 }
 
