@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { collection, getDocs } from 'firebase/firestore';
 import { db, auth } from '../firebase';
-import { Navigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { ref, set, push, onValue } from 'firebase/database';
 import "../App.css"
 import { database } from '../firebase';
+import ReactMarkdown from 'react-markdown';
+import remarkToc from 'remark-toc';
 
 const Community = () => {
     const [user, setUser] = useState(null);
@@ -12,6 +14,21 @@ const Community = () => {
     const [posts, setPosts] = useState([]);
     const [commentText, setCommentText] = useState('');
     const [comments, setComments] = useState({});
+    const [showAllComments, setShowAllComments] = useState(false);
+    const [selectedPostComments, setSelectedPostComments] = useState([]);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [searchResults, setSearchResults] = useState([]);
+
+    useEffect(() => {
+        if (user) {
+            const filteredUsers = user.displayName.toLowerCase().includes(searchTerm.toLowerCase()) ? [user] : [];
+            setSearchResults(filteredUsers);
+        }
+    }, [searchTerm, user]);
+
+    const handleSearchTermChange = (e) => {
+        setSearchTerm(e.target.value);
+    };
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -20,7 +37,7 @@ const Community = () => {
         });
 
         return () => unsubscribe();
-    }, []);
+    }, [user]);
 
     useEffect(() => {
         const fetchPosts = async () => {
@@ -78,25 +95,19 @@ const Community = () => {
             });
     };
 
-    if (loading) {
-        return (
-            <div className='container text-center'>
-                <div className="spinner-border" role="status">
-                    <span className="visually-hidden">Loading...</span>
-                </div>
-            </div>
-        );
-    }
+    const handleViewAllComments = (postId) => {
+        setSelectedPostComments(Object.values(comments[postId]));
+        setShowAllComments(true);
+    };
 
-    // Redirect to the login page if user is not logged in or not using Google login
-    if (!user || user.providerData[0].providerId !== 'google.com') {
-        return <Navigate to="/community/signin" />;
+    if (!loading) {
+
     }
 
     return (
         <>
             <div className="container">
-                <ul className="nav nav-pills nav-fill gap-2 p-1 small rounded-5 shadow" id="pillNav2" role="tablist">
+                <ul className="nav nav-pills nav-fill gap-2 small rounded-5 shadow" id="pillNav2" role="tablist">
                     <li className="nav-item" role="presentation">
                         <Link to="/community" className="nav-link rounded-5">Home</Link>
                     </li>
@@ -107,42 +118,134 @@ const Community = () => {
                         <Link to="/community/post" className="nav-link rounded-5">Upload Post</Link>
                     </li>
                 </ul>
-                <div className='row justify-content-center mt-3'>
+                <div className='row gap-3 mt-3'>
+                    <div className='col-md-3'>
+                        <input
+                            type="text"
+                            placeholder="Search users..."
+                            value={searchTerm}
+                            className="form-control"
+                            onChange={handleSearchTermChange}
+                        />
+                        <div>
+                            {searchTerm !== '' && searchResults.map((result) => (
+                                <div key={result.id}>
+                                    <a href={`/community/profil/${result.displayName}`} className="text-decoration-none mt-3">{result.displayName}</a>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
                     <div className='col-md-6'>
                         {posts.map((post) => (
-                            <div key={post.id} className="card mb-3">
-                                <div className='card-header'>
-                                    <div className='d-flex justify-content-between align-items-center'>
-                                        <div>
-                                            <Link to={`/community/profil/${post.displayName}`} className="nav-link card-title">{post.displayName}</Link>
-                                        </div>
-                                        <div>
-                                            <small className="nav-link text-muted">{new Date(post.createdAt?.seconds * 1000).toLocaleDateString()}</small>
-                                        </div>
+                            <div key={post.id} className="container mb-3">
+                                <div className='d-flex justify-content-between align-items-center mb-2'>
+                                    <div>
+                                        <Link to={`/community/profil/${post.displayName}`} className="nav-link card-title">{post.displayName}</Link>
+                                    </div>
+                                    <div>
+                                        <small className="nav-link text-muted">{new Date(post.createdAt?.seconds * 1000).toLocaleDateString()}</small>
                                     </div>
                                 </div>
-                                <div className="card-body">
-                                    <p className="card-text">{post.text}</p>
-                                    {post.imageUrl && <img src={post.imageUrl} alt="Post" className="card-img-top" />}
+                                <div className='border rounded'>
+                                    {post.imageUrl && post.imageUrl.endsWith('.mp4') ? (
+                                        <video controls className="card-img-top" style={{ transform: 'scale(0.9)' }}>
+                                            <source src={post.imageUrl} type="video/mp4" />
+                                            Your browser does not support the video tag.
+                                        </video>
+                                    ) : (
+                                        <img src={post.imageUrl} alt="Post" className="card-img-top" style={{ transform: 'scale(0.9)' }} />                                        
+                                    )}
                                 </div>
-                                <div className='card-footer'>
+                                <div className='mt-2'>
+                                    <ReactMarkdown
+                                        className="card-text"
+                                        remarkPlugins={[remarkToc]}
+                                        toc
+                                        children={post.text}
+                                    />
+                                </div>
+                                <div className=''>
                                     {comments && comments[post.id] && (
-                                        <ul className="list-group mb-2">
+                                        <div className="mb-2">
                                             {Object.values(comments[post.id]).slice(0, 1).map((comment, index) => (
-                                                <li key={index} className="list-group-item">{comment.displayName}: {comment.text}</li>
+                                                <div key={index}>
+                                                    <small>{comment.displayName}: {comment.text}</small>
+                                                </div>
                                             ))}
-                                        </ul>
+                                            <a className="text-decoration-none cursor-pointer" onClick={() => handleViewAllComments(post.id)}>View All Comments</a>
+                                        </div>
                                     )}
                                     <div className="d-flex">
                                         <textarea className="form-control" value={commentText} onChange={(e) => setCommentText(e.target.value)} placeholder="Add a comment..." rows="1" style={{ resize: "none" }} required></textarea>
                                         <button className="btn btn-primary" onClick={() => handleCommentSubmit(post.id)}><i className="bi bi-send"></i></button>
                                     </div>
                                 </div>
+                                <hr />
                             </div>
                         ))}
                     </div>
                 </div>
             </div>
+
+            {showAllComments && (
+                <div className="modal fade show" style={{ display: "block" }} tabIndex="-1" role="dialog">
+                    <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-overflow" style={{ overflowY: 'auto' }}>
+                        <div className="modal-content">
+                            {posts.map((post) => (
+                                <div key={post.id} className=''>
+                                    <div className='card'>
+                                        <div className=''>
+                                            {post.imageUrl && post.imageUrl.endsWith('.mp4') ? (
+                                                <video controls className='card-img-top'>
+                                                    <source src={post.imageUrl} type="video/mp4" />
+                                                    Your browser does not support the video tag.
+                                                </video>
+                                            ) : (
+                                                <img src={post.imageUrl} alt="Post" className='card-img-top' />
+                                            )}
+                                        </div>
+                                        <div className='card-body'>
+                                            <div className='d-flex justify-content-between align-items-center mb-2'>
+                                                <div>
+                                                    <Link to={`/community/profil/${post.displayName}`} className="nav-link">{post.displayName}</Link>
+                                                </div>
+                                                <div>
+                                                    <small className="nav-link text-muted">{new Date(post.createdAt?.seconds * 1000).toLocaleDateString()}</small>
+                                                </div>
+                                            </div>
+                                            <hr />
+                                            <div>
+                                                <ReactMarkdown
+                                                    className="card-text"
+                                                    remarkPlugins={[remarkToc]}
+                                                    toc
+                                                    children={post.text}
+                                                />
+                                            </div>
+                                            <div>
+                                                {selectedPostComments.map((comment, index) => (
+                                                    <div key={index} className="mb-2">
+                                                        <small>{comment.displayName}: {comment.text}</small>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            <div>
+                                                <div className="d-flex">
+                                                    <textarea className="form-control" value={commentText} onChange={(e) => setCommentText(e.target.value)} placeholder="Add a comment..." rows="1" style={{ resize: "none" }} required></textarea>
+                                                    <button className="btn btn-primary" onClick={() => handleCommentSubmit(post.id)}><i className="bi bi-send"></i></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="card-footer">
+                                            <button type="button" className="btn btn-secondary" onClick={() => setShowAllComments(false)}>Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            )}
         </>
     );
 }

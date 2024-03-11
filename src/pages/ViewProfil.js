@@ -7,9 +7,9 @@ const ViewProfile = () => {
     const { displayName } = useParams();
     const [userPosts, setUserPosts] = useState([]);
 
-    useEffect(() => {
-        console.log('displayName:', displayName);
-    }, [displayName]);
+    // useEffect(() => {
+    //     console.log('displayName:', displayName);
+    // }, [displayName]);
 
     useEffect(() => {
         const fetchUserPosts = async () => {
@@ -32,21 +32,33 @@ const ViewProfile = () => {
     return (
         <div className="container">
             <a href="/community" className="nav-link"><i className="bi bi-arrow-left-square"></i> Back</a>
-            <div className='row'>
-            <div className='col-'>
-
-            </div>
-            </div>
-            <div className="card mt-3 mb-3">
-                <div className="card-body">
-                    <h5 className="card-title">{displayName}</h5>
-                    {userPosts.map((post) => (
-                        <div key={post.id} className="card mb-3">
-                            <div className="card-body">
-                                <p className="card-text">{post.text}</p>
+            <div className='row justify-content-center'>
+                <div className='col-md-5'>
+                    <div className="card mt-3 mb-3">
+                        <div className="card-body">
+                            <h5 className="card-title">{displayName}</h5>
+                            <hr />
+                            <ul className="nav nav-pills nav-fill gap-2 small rounded-5 shadow" id="pillNav2" role="tablist">
+                                <li className="nav-item" role="presentation">
+                                    <button className="nav-link rounded-5" id="home-tab2">Post</button>
+                                </li>
+                                {/* <li className="nav-item" role="presentation">
+                                    <button className="nav-link rounded-5" id="profile-tab2">Reels</button>
+                                </li> */}
+                            </ul>
+                            <div className='row row-cols-3 justify-content-start mt-3'>
+                                {userPosts.map((post) => (
+                                    <div className='col' key={post.id}>
+                                        <div className="card h-100">
+                                            <div className="card-body">
+                                                {post.imageUrl && <img src={post.imageUrl} alt="Post" className="card-img" style={{ objectFit: "cover", transform: 'scale(1.0)' }} />}
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
                         </div>
-                    ))}
+                    </div>
                 </div>
             </div>
         </div>
