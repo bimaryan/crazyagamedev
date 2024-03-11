@@ -6,11 +6,11 @@ import { Link } from 'react-router-dom';
 
 const Post = () => {
     const [text, setText] = useState('');
-    const [file, setFile] = useState(null);
+    const [image, setImage] = useState(null);
     const [uploading, setUploading] = useState(false);
 
-    const handleFileChange = (e) => {
-        setFile(e.target.files[0]);
+    const handleImageChange = (e) => {
+        setImage(e.target.files[0]);
     };
 
     const handleSubmit = async (e) => {
@@ -18,11 +18,11 @@ const Post = () => {
         setUploading(true);
 
         try {
-            let fileUrl = '';
-            if (file) {
-                const storageRef = ref(storage, `Upload/Community/${file.name}`);
-                await uploadBytes(storageRef, file);
-                fileUrl = await getDownloadURL(storageRef);
+            let imageUrl = '';
+            if (image) {
+                const storageRef = ref(storage, `Upload/Community/${image.name}`);
+                await uploadBytes(storageRef, image);
+                imageUrl = await getDownloadURL(storageRef);
             }
 
             // Get the current user's display name
@@ -32,7 +32,7 @@ const Post = () => {
             // Add post data to Firestore including display name
             const docRef = await addDoc(collection(db, 'posts'), {
                 text,
-                fileUrl,
+                imageUrl,
                 displayName, // Add displayName to the post data
                 createdAt: new Date()
             });
@@ -41,7 +41,7 @@ const Post = () => {
 
             // Reset the form after submission
             setText('');
-            setFile(null);
+            setImage(null);
             setUploading(false);
         } catch (error) {
             console.error("Error adding document: ", error);
@@ -62,11 +62,14 @@ const Post = () => {
                     <Link to="/community/post" className="nav-link rounded-5">Upload Post</Link>
                 </li>
             </ul>
+            {/* <div className='mb-3'>
+                <h5 className="fw-bold">Your Post</h5>
+            </div> */}
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
                     <center>
                         <div className="mb-3">
-                            <input type="file" className="form-control" id="file" onChange={handleFileChange} accept="image/*,video/*" />
+                            <input type="file" className="form-control" id="image" onChange={handleImageChange} accept="image/*" />
                         </div>
                         <center>
                             <label className="nav-link bg-secondary rounded mb-3 push"><i className="fa-solid fa-circle-info"></i> Text kamu saat ini dibatasi 200 karakter</label>

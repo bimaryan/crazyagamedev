@@ -130,7 +130,7 @@ const Community = () => {
                         <div>
                             {searchTerm !== '' && searchResults.map((result) => (
                                 <div key={result.id}>
-                                    <a href={`/community/profil/${result.displayName}`} className="text-decoration-none mt-3">{result.displayName}</a>
+                                    <a href={`/community/profil/${result.displayName}`} className="text-decoration-none mt-2">{result.displayName}</a>
                                 </div>
                             ))}
                         </div>
@@ -147,14 +147,7 @@ const Community = () => {
                                     </div>
                                 </div>
                                 <div className='border rounded'>
-                                    {post.imageUrl && post.imageUrl.endsWith('.mp4') ? (
-                                        <video controls className="card-img-top" style={{ transform: 'scale(0.9)' }}>
-                                            <source src={post.imageUrl} type="video/mp4" />
-                                            Your browser does not support the video tag.
-                                        </video>
-                                    ) : (
-                                        <img src={post.imageUrl} alt="Post" className="card-img-top" style={{ transform: 'scale(0.9)' }} />                                        
-                                    )}
+                                    {post.imageUrl && <img src={post.imageUrl} alt="Post" className="card-img-top" style={{ transform: 'scale(0.9)' }} />}
                                 </div>
                                 <div className='mt-2'>
                                     <ReactMarkdown
@@ -195,14 +188,7 @@ const Community = () => {
                                 <div key={post.id} className=''>
                                     <div className='card'>
                                         <div className=''>
-                                            {post.imageUrl && post.imageUrl.endsWith('.mp4') ? (
-                                                <video controls className='card-img-top'>
-                                                    <source src={post.imageUrl} type="video/mp4" />
-                                                    Your browser does not support the video tag.
-                                                </video>
-                                            ) : (
-                                                <img src={post.imageUrl} alt="Post" className='card-img-top' />
-                                            )}
+                                            {post.imageUrl && <img src={post.imageUrl} alt="Post" className='card-img-top' />}
                                         </div>
                                         <div className='card-body'>
                                             <div className='d-flex justify-content-between align-items-center mb-2'>
