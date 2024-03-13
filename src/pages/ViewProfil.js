@@ -7,10 +7,6 @@ const ViewProfile = () => {
     const { displayName } = useParams();
     const [userPosts, setUserPosts] = useState([]);
 
-    // useEffect(() => {
-    //     console.log('displayName:', displayName);
-    // }, [displayName]);
-
     useEffect(() => {
         const fetchUserPosts = async () => {
             try {
@@ -29,6 +25,13 @@ const ViewProfile = () => {
         fetchUserPosts();
     }, [displayName]);
 
+    const removeBlur = () => {
+        const images = document.querySelectorAll('.post-image');
+        images.forEach(image => {
+            image.style.filter = 'none';
+        });
+    };
+
     return (
         <div className="container">
             <a href="/community" className="nav-link"><i className="bi bi-arrow-left-square"></i> Back</a>
@@ -42,16 +45,13 @@ const ViewProfile = () => {
                                 <li className="nav-item" role="presentation">
                                     <button className="nav-link rounded-5" id="home-tab2">Post</button>
                                 </li>
-                                {/* <li className="nav-item" role="presentation">
-                                    <button className="nav-link rounded-5" id="profile-tab2">Reels</button>
-                                </li> */}
                             </ul>
                             <div className='row row-cols-3 justify-content-start mt-3'>
                                 {userPosts.map((post) => (
                                     <div className='col' key={post.id}>
                                         <div className="card h-100">
                                             <div className="card-body">
-                                                {post.imageUrl && <img src={post.imageUrl} alt="Post" className="card-img" style={{ objectFit: "cover", transform: 'scale(1.0)' }} />}
+                                                {post.imageUrl && <img src={post.imageUrl} alt="Post" className="card-img post-image" onLoad={removeBlur} style={{ objectFit: "cover", transform: 'scale(1.0)', filter: 'blur(5px)' }} />}
                                             </div>
                                         </div>
                                     </div>
