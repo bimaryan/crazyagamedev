@@ -30,11 +30,11 @@ const Profil = () => {
     };
 
     if (!user) {
-        return (
-            <div className="container">
-                <h2>Loading...</h2>
+        return <div className='container text-center'>
+            <div className="spinner-border" role="status">
+                <span className="visually-hidden">Loading...</span>
             </div>
-        );
+        </div>;
     }
 
     return (
@@ -43,9 +43,11 @@ const Profil = () => {
                 <li className="nav-item" role="presentation">
                     <Link to="/community" className="nav-link rounded-5">Home</Link>
                 </li>
-                <li className="nav-item" role="presentation">
-                    <Link to="/community/profil" className="nav-link rounded-5">Profil</Link>
-                </li>
+                {user && (
+                    <li className="nav-item" role="presentation">
+                        <Link to="/community/profil" className="nav-link rounded-5">Profil</Link>
+                    </li>
+                )}
                 <li className="nav-item" role="presentation">
                     <Link to="/community/post" className="nav-link rounded-5">Upload Post</Link>
                 </li>

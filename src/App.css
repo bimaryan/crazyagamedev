@@ -1,7 +1,19 @@
 .modal-overflow {
-    overflow: hidden;
+  overflow: hidden;
 }
 .modal-overflow .modal-content {
-    overflow-y: auto;
-    max-height: calc(100vh - 100px); /* Sesuaikan dengan kebutuhan */
+  overflow-y: auto;
+  max-height: calc(100vh - 100px); /* Sesuaikan dengan kebutuhan */
+}
+
+.placeholder {
+  filter: blur(8px);
+  background-size: cover;
+  background-position: center;
+  width: 100%;
+  height: 300px; /* Sesuaikan dengan tinggi gambar */
+}
+
+.hidden {
+  visibility: hidden;
 }

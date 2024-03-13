@@ -14,21 +14,25 @@ const Community = () => {
     const [posts, setPosts] = useState([]);
     const [commentText, setCommentText] = useState('');
     const [comments, setComments] = useState({});
-    const [showAllComments, setShowAllComments] = useState(false);
+    const [selectedPost, setSelectedPost] = useState(null);
     const [selectedPostComments, setSelectedPostComments] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
-    const [searchResults, setSearchResults] = useState([]);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [imageLoading, setImageLoading] = useState(true);
 
     useEffect(() => {
-        if (user) {
-            const filteredUsers = user.displayName.toLowerCase().includes(searchTerm.toLowerCase()) ? [user] : [];
-            setSearchResults(filteredUsers);
-        }
-    }, [searchTerm, user]);
+        const unsubscribe = auth.onAuthStateChanged((user) => {
+            setUser(user);
+            setLoading(false);
+            if (user) {
+                setIsLoggedIn(true);
+            } else {
+                setIsLoggedIn(false);
+            }
+        });
 
-    const handleSearchTermChange = (e) => {
-        setSearchTerm(e.target.value);
-    };
+        return () => unsubscribe();
+    }, []);
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -96,12 +100,17 @@ const Community = () => {
     };
 
     const handleViewAllComments = (postId) => {
-        setSelectedPostComments(Object.values(comments[postId]));
-        setShowAllComments(true);
+        const selectedPost = posts.find(post => post.id === postId);
+        setSelectedPost(selectedPost, true);
+        setSelectedPostComments(Object.values(comments[postId] || {}));
     };
 
-    if (!loading) {
-
+    if (loading) {
+        return <div className='container text-center'>
+            <div className="spinner-border" role="status">
+                <span className="visually-hidden">Loading...</span>
+            </div>
+        </div>;
     }
 
     return (
@@ -111,30 +120,16 @@ const Community = () => {
                     <li className="nav-item" role="presentation">
                         <Link to="/community" className="nav-link rounded-5">Home</Link>
                     </li>
-                    <li className="nav-item" role="presentation">
-                        <Link to="/community/profil" className="nav-link rounded-5">Profil</Link>
-                    </li>
+                    {user && (
+                        <li className="nav-item" role="presentation">
+                            <Link to="/community/profil" className="nav-link rounded-5">Profil</Link>
+                        </li>
+                    )}
                     <li className="nav-item" role="presentation">
                         <Link to="/community/post" className="nav-link rounded-5">Upload Post</Link>
                     </li>
                 </ul>
-                <div className='row gap-3 mt-3'>
-                    <div className='col-md-3'>
-                        <input
-                            type="text"
-                            placeholder="Search users..."
-                            value={searchTerm}
-                            className="form-control"
-                            onChange={handleSearchTermChange}
-                        />
-                        <div>
-                            {searchTerm !== '' && searchResults.map((result) => (
-                                <div key={result.id}>
-                                    <a href={`/community/profil/${result.displayName}`} className="text-decoration-none mt-2">{result.displayName}</a>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
+                <div className='row gap-3 mt-3 justify-content-center'>
                     <div className='col-md-6'>
                         {posts.map((post) => (
                             <div key={post.id} className="container mb-3">
@@ -147,7 +142,18 @@ const Community = () => {
                                     </div>
                                 </div>
                                 <div className='border rounded'>
-                                    {post.imageUrl && <img src={post.imageUrl} alt="Post" className="card-img-top" style={{ transform: 'scale(0.9)' }} />}
+                                    {post.imageUrl && (
+                                        <>
+                                            {imageLoading && <div className="placeholder" style={{ backgroundImage: `url(${post.imageUrl})` }} />}
+                                            <img
+                                                src={post.imageUrl}
+                                                alt="Post"
+                                                className={`card-img-top ${imageLoading ? 'hidden' : ''}`}
+                                                onLoad={() => setImageLoading(false)}
+                                                style={{ transform: "scale(0.9)" }}
+                                            />
+                                        </>
+                                    )}
                                 </div>
                                 <div className='mt-2'>
                                     <ReactMarkdown
@@ -169,8 +175,16 @@ const Community = () => {
                                         </div>
                                     )}
                                     <div className="d-flex">
-                                        <textarea className="form-control" value={commentText} onChange={(e) => setCommentText(e.target.value)} placeholder="Add a comment..." rows="1" style={{ resize: "none" }} required></textarea>
-                                        <button className="btn btn-primary" onClick={() => handleCommentSubmit(post.id)}><i className="bi bi-send"></i></button>
+                                        {isLoggedIn ? (
+                                            <>
+                                                <textarea className="form-control" value={commentText} onChange={(e) => setCommentText(e.target.value)} placeholder="Add a comment..." rows="1" style={{ resize: "none" }} required></textarea>
+                                                <button className="btn btn-primary" onClick={() => handleCommentSubmit(post.id)}><i className="bi bi-send"></i></button>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <p className="text-muted">You need to <a href='/community/signin'>Login</a> to comment.</p>
+                                            </>
+                                        )}
                                     </div>
                                 </div>
                                 <hr />
@@ -180,54 +194,70 @@ const Community = () => {
                 </div>
             </div>
 
-            {showAllComments && (
+            {selectedPost && (
                 <div className="modal fade show" style={{ display: "block" }} tabIndex="-1" role="dialog">
                     <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-overflow" style={{ overflowY: 'auto' }}>
                         <div className="modal-content">
-                            {posts.map((post) => (
-                                <div key={post.id} className=''>
-                                    <div className='card'>
-                                        <div className=''>
-                                            {post.imageUrl && <img src={post.imageUrl} alt="Post" className='card-img-top' />}
-                                        </div>
-                                        <div className='card-body'>
-                                            <div className='d-flex justify-content-between align-items-center mb-2'>
-                                                <div>
-                                                    <Link to={`/community/profil/${post.displayName}`} className="nav-link">{post.displayName}</Link>
-                                                </div>
-                                                <div>
-                                                    <small className="nav-link text-muted">{new Date(post.createdAt?.seconds * 1000).toLocaleDateString()}</small>
-                                                </div>
-                                            </div>
-                                            <hr />
-                                            <div>
-                                                <ReactMarkdown
-                                                    className="card-text"
-                                                    remarkPlugins={[remarkToc]}
-                                                    toc
-                                                    children={post.text}
+                            <div key={selectedPost.id} className=''>
+                                <div className='card'>
+                                    <div className=''>
+                                        {selectedPost.imageUrl && (
+                                            <>
+                                                {imageLoading && <div className="placeholder" style={{ backgroundImage: `url(${selectedPost.imageUrl})` }} />}
+                                                <img
+                                                    src={selectedPost.imageUrl}
+                                                    alt="Post"
+                                                    className={`card-img-top ${imageLoading ? 'hidden' : ''}`}
+                                                    onLoad={() => setImageLoading(false)}
                                                 />
+                                            </>
+                                        )}
+                                    </div>
+                                    <div className='card-body'>
+                                        <div className='d-flex justify-content-between align-items-center mb-2'>
+                                            <div>
+                                                <Link to={`/community/profil/${selectedPost.displayName}`} className="nav-link">{selectedPost.displayName}</Link>
                                             </div>
                                             <div>
-                                                {selectedPostComments.map((comment, index) => (
-                                                    <div key={index} className="mb-2">
-                                                        <small>{comment.displayName}: {comment.text}</small>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                            <div>
-                                                <div className="d-flex">
-                                                    <textarea className="form-control" value={commentText} onChange={(e) => setCommentText(e.target.value)} placeholder="Add a comment..." rows="1" style={{ resize: "none" }} required></textarea>
-                                                    <button className="btn btn-primary" onClick={() => handleCommentSubmit(post.id)}><i className="bi bi-send"></i></button>
-                                                </div>
+                                                <small className="nav-link text-muted">{new Date(selectedPost.createdAt?.seconds * 1000).toLocaleDateString()}</small>
                                             </div>
                                         </div>
-                                        <div className="card-footer">
-                                            <button type="button" className="btn btn-secondary" onClick={() => setShowAllComments(false)}>Close</button>
+                                        <hr />
+                                        <div>
+                                            <ReactMarkdown
+                                                className="card-text"
+                                                remarkPlugins={[remarkToc]}
+                                                toc
+                                                children={selectedPost.text}
+                                            />
+                                        </div>
+                                        <div>
+                                            {selectedPostComments.map((comment, index) => (
+                                                <div key={index} className="mb-2">
+                                                    <small>{comment.displayName}: {comment.text}</small>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        <div>
+                                            <div className="d-flex">
+                                                {isLoggedIn ? (
+                                                    <>
+                                                        <textarea className="form-control" value={commentText} onChange={(e) => setCommentText(e.target.value)} placeholder="Add a comment..." rows="1" style={{ resize: "none" }} required></textarea>
+                                                        <button className="btn btn-primary" onClick={() => handleCommentSubmit(selectedPost.id)}><i className="bi bi-send"></i></button>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <p className="text-muted">You need to <a href='/community/signin'>Login</a> to comment.</p>
+                                                    </>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
+                                    <div className="card-footer">
+                                        <button type="button" className="btn btn-secondary" onClick={() => setSelectedPost(false)}>Close</button>
+                                    </div>
                                 </div>
-                            ))}
+                            </div>
                         </div>
                     </div>
                 </div>

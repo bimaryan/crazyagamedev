@@ -1,13 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { collection, addDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage, auth } from '../firebase';
 import { Link } from 'react-router-dom';
 
 const Post = () => {
+    const [user, setUser] = useState(null);
     const [text, setText] = useState('');
     const [image, setImage] = useState(null);
     const [uploading, setUploading] = useState(false);
+    const [userLoggedIn, setUserLoggedIn] = useState(false);
+
+    useEffect(() => {
+        const unsubscribe = auth.onAuthStateChanged((user) => {
+            setUserLoggedIn(!!user);
+        });
+
+        return () => unsubscribe();
+    }, []);
+
 
     const handleImageChange = (e) => {
         setImage(e.target.files[0]);
@@ -55,32 +66,39 @@ const Post = () => {
                 <li className="nav-item" role="presentation">
                     <Link to="/community" className="nav-link rounded-5">Home</Link>
                 </li>
-                <li className="nav-item" role="presentation">
-                    <Link to="/community/profil" className="nav-link rounded-5">Profil</Link>
-                </li>
+                {user && (
+                    <li className="nav-item" role="presentation">
+                        <Link to="/community/profil" className="nav-link rounded-5">Profil</Link>
+                    </li>
+                )}
                 <li className="nav-item" role="presentation">
                     <Link to="/community/post" className="nav-link rounded-5">Upload Post</Link>
                 </li>
             </ul>
-            {/* <div className='mb-3'>
-                <h5 className="fw-bold">Your Post</h5>
-            </div> */}
-            <form onSubmit={handleSubmit}>
-                <div className="form-group">
-                    <center>
-                        <div className="mb-3">
-                            <input type="file" className="form-control" id="image" onChange={handleImageChange} accept="image/*" />
+            {userLoggedIn ? (
+                <>
+                    <form onSubmit={handleSubmit}>
+                        <div className="form-group">
+                            <center>
+                                <div className="mb-3">
+                                    <input type="file" className="form-control" id="image" onChange={handleImageChange} accept="image/*" />
+                                </div>
+                                <center>
+                                    <label className="nav-link bg-secondary rounded mb-3 push"><i className="fa-solid fa-circle-info"></i> Text kamu saat ini dibatasi 200 karakter</label>
+                                </center>
+                                <div className="mb-3">
+                                    <textarea name="pesan" id="text" className="form-control border" value={text} onChange={(e) => setText(e.target.value)} required maxLength={200} style={{ resize: "none" }} rows={6}></textarea>
+                                </div>
+                                <button type="submit" className="btn btn-primary w-100" disabled={uploading}>{uploading ? 'Uploading...' : 'Post'}</button>
+                            </center>
                         </div>
-                        <center>
-                            <label className="nav-link bg-secondary rounded mb-3 push"><i className="fa-solid fa-circle-info"></i> Text kamu saat ini dibatasi 200 karakter</label>
-                        </center>
-                        <div className="mb-3">
-                            <textarea name="pesan" id="text" className="form-control border" value={text} onChange={(e) => setText(e.target.value)} required maxLength={200} style={{ resize: "none" }} rows={6}></textarea>
-                        </div>
-                        <button type="submit" className="btn btn-primary w-100" disabled={uploading}>{uploading ? 'Uploading...' : 'Post'}</button>
-                    </center>
+                    </form>
+                </>
+            ) : (
+                <div className="text-center">
+                    <p>Silakan <a href="/community/signin">masuk</a> untuk mengunggah posting.</p>
                 </div>
-            </form>
+            )}
         </div>
     );
 }
