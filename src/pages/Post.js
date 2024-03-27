@@ -5,7 +5,7 @@ import { db, storage, auth } from '../firebase';
 import { Link } from 'react-router-dom';
 
 const Post = () => {
-    const [user, setUser] = useState(null);
+    const [user] = useState(null);
     const [text, setText] = useState('');
     const [image, setImage] = useState(null);
     const [uploading, setUploading] = useState(false);

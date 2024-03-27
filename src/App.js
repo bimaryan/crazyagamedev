@@ -17,6 +17,8 @@ import ResetCommunity from './pages/ResetCommunity';
 import ViewProfile from './pages/ViewProfil';
 import Profil from './pages/Profil';
 import Post from './pages/Post';
+import Moodstrap from './pages/Moodstrap';
+import Me from './pages/Me';
 
 function App() {
   return (
@@ -42,6 +44,8 @@ function App() {
           <Route path='/community/profil' element={<Profil />} />
           <Route path='/community/post' element={<Post />} />
           <Route path='/community/profil/:displayName' element={<ViewProfile/>}/>
+          <Route path='/moodstrap' element={<Moodstrap/>}/>
+          <Route path='/me' element={<Me/>}/>
           <Route path="*" element={<Notfound />} />
         </Routes>
       </div>

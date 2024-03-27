@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 // import { useNavigate } from 'react-router-dom';
 import { auth } from '../firebase';
-import { Link } from "react-router-dom";
 
 const Navbar = () => {
     const [user, setUser] = useState(null);
