@@ -19,6 +19,7 @@ import Profil from './pages/Profil';
 import Post from './pages/Post';
 import Moodstrap from './pages/Moodstrap';
 import Me from './pages/Me';
+import Nulis from './pages/Code';
 
 function App() {
   return (
@@ -46,6 +47,7 @@ function App() {
           <Route path='/community/profil/:displayName' element={<ViewProfile/>}/>
           <Route path='/moodstrap' element={<Moodstrap/>}/>
           <Route path='/me' element={<Me/>}/>
+          <Route path='/code' element={<Nulis/>}/>
           <Route path="*" element={<Notfound />} />
         </Routes>
       </div>

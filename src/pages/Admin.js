@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { auth } from '../firebase';
-import { collection, addDoc } from 'firebase/firestore';
+import { collection, addDoc, getDocs } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../firebase';
-import { Nav, Tab } from 'react-bootstrap';
+import { Nav, Tab, Modal} from 'react-bootstrap';
 
 const Admin = () => {
     const [user, setUser] = useState(null);
@@ -16,6 +16,9 @@ const Admin = () => {
     const [uploading, setUploading] = useState(false);
     const [learnTitle, setLearnTitle] = useState('');
     const [learnDescription, setLearnDescription] = useState('');
+    const [games, setGames] = useState([]);
+    const [showModal, setShowModal] = useState(false);
+    const [selectedGame, setSelectedGame] = useState(null);
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -24,6 +27,20 @@ const Admin = () => {
         });
 
         return () => unsubscribe();
+    }, []);
+
+    useEffect(() => {
+        const fetchGames = async () => {
+            try {
+                const gamesSnapshot = await getDocs(collection(db, 'games'));
+                const gamesData = gamesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                setGames(gamesData);
+            } catch (error) {
+                console.error('Error fetching games:', error);
+            }
+        };
+
+        fetchGames();
     }, []);
 
     // Redirect user to the community page if they logged in with Google
@@ -78,6 +95,17 @@ const Admin = () => {
         } catch (error) {
             console.error("Error adding document: ", error);
         }
+    };
+
+    const handleEditClick = (game) => {
+        setSelectedGame(game);
+        setShowModal(true);
+    };
+
+    const handleEditSubmit = (e) => {
+        e.preventDefault();
+        // Logic to update game details in Firebase Firestore
+        setShowModal(false);
     };
 
     if (loading) {
@@ -162,9 +190,51 @@ const Admin = () => {
                     <Tab.Pane eventKey="editGame">
                         <div className='card'>
                             <div className='card-body'>
-
+                                {games.map(game => (
+                                    <div key={game.id}>
+                                        <div className='card mb-2'>
+                                            <div className='card-body'>
+                                                <div className='row row-cols-1 row-cols-lg-2'>
+                                                    <div className='col text-center'>
+                                                        <img src={game.image} alt={game.title} className='img-thumbnail' />
+                                                    </div>
+                                                    <div className='col'>
+                                                        <div className='d-flex mt-2 justify-content-between align-items-center'>
+                                                            <h3>{game.title}</h3>
+                                                            <button className="btn btn-primary" onClick={() => handleEditClick(game)}>Edit</button>
+                                                        </div>
+                                                        <p>{game.description}</p>
+                                                        <a href={game.link} target="_blank" rel="noopener noreferrer">Play Now</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
                         </div>
+                        <Modal show={showModal} onHide={() => setShowModal(false)}>
+                            <Modal.Header closeButton>
+                                <Modal.Title>Edit Game</Modal.Title>
+                            </Modal.Header>
+                            <Modal.Body>
+                                <form onSubmit={handleEditSubmit}>
+                                    <div className="mb-3">
+                                        <label htmlFor="editTitle" className="form-label">Title:</label>
+                                        <input type="text" className="form-control" id="editTitle" value={selectedGame?.title} onChange={(e) => setSelectedGame({ ...selectedGame, title: e.target.value })} required />
+                                    </div>
+                                    <div className="mb-3">
+                                        <label htmlFor="editDescription" className="form-label">Description:</label>
+                                        <textarea className="form-control" id="editDescription" rows="3" value={selectedGame?.description} onChange={(e) => setSelectedGame({ ...selectedGame, description: e.target.value })} required></textarea>
+                                    </div>
+                                    <div className="mb-3">
+                                        <label htmlFor="editLink" className="form-label">Link:</label>
+                                        <input type="text" className="form-control" id="editLink" value={selectedGame?.link} onChange={(e) => setSelectedGame({ ...selectedGame, link: e.target.value })} required />
+                                    </div>
+                                    <button type="submit" className="btn btn-primary">Save Changes</button>
+                                </form>
+                            </Modal.Body>
+                        </Modal>
                     </Tab.Pane>
                     <Tab.Pane eventKey="learn">
                         <div className='card'>
