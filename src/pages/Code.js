@@ -59,7 +59,7 @@ const Nulis = () => {
             </div>
             <div className="row justify-content-center mt-3">
                 <div className="col-md-6">
-                    <div id="kertas" className="card" style={{ whiteSpace: 'pre-line' }}>
+                    <div id="kertas" className="card">
                         <div className='card-body'>
                             <pre>
                                 <div className='d-flex gap-2 mb-3'>

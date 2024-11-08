@@ -130,7 +130,7 @@ const Community = () => {
                     </li>
                 </ul>
                 <div className='row gap-3 mt-3 justify-content-center'>
-                    <div className='col-md-6'>
+                    <div className='col-md-5'>
                         {posts.map((post) => (
                             <div key={post.id} className="container mb-3">
                                 <div className='d-flex justify-content-between align-items-center mb-2'>

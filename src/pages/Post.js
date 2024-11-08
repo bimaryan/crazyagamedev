@@ -77,22 +77,26 @@ const Post = () => {
             </ul>
             {userLoggedIn ? (
                 <>
-                    <form onSubmit={handleSubmit}>
-                        <div className="form-group">
-                            <center>
-                                <div className="mb-3">
-                                    <input type="file" className="form-control" id="image" onChange={handleImageChange} accept="image/*" />
+                    <div className='row justify-content-center'>
+                        <div className='col col-md-5'>
+                            <form onSubmit={handleSubmit}>
+                                <div className="form-group">
+                                    <center>
+                                        <div className="mb-3">
+                                            <input type="file" className="form-control" id="image" onChange={handleImageChange} accept="image/*" />
+                                        </div>
+                                        <center>
+                                            <label className="nav-link bg-secondary rounded mb-3 push"><i className="fa-solid fa-circle-info"></i> Text kamu saat ini dibatasi 200 karakter</label>
+                                        </center>
+                                        <div className="mb-3">
+                                            <textarea name="pesan" id="text" className="form-control border" value={text} onChange={(e) => setText(e.target.value)} required maxLength={200} style={{ resize: "none" }} rows={6}></textarea>
+                                        </div>
+                                        <button type="submit" className="btn btn-primary w-100" disabled={uploading}>{uploading ? 'Uploading...' : 'Post'}</button>
+                                    </center>
                                 </div>
-                                <center>
-                                    <label className="nav-link bg-secondary rounded mb-3 push"><i className="fa-solid fa-circle-info"></i> Text kamu saat ini dibatasi 200 karakter</label>
-                                </center>
-                                <div className="mb-3">
-                                    <textarea name="pesan" id="text" className="form-control border" value={text} onChange={(e) => setText(e.target.value)} required maxLength={200} style={{ resize: "none" }} rows={6}></textarea>
-                                </div>
-                                <button type="submit" className="btn btn-primary w-100" disabled={uploading}>{uploading ? 'Uploading...' : 'Post'}</button>
-                            </center>
+                            </form>
                         </div>
-                    </form>
+                    </div>
                 </>
             ) : (
                 <div className="text-center">

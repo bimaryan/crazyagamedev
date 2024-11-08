@@ -75,7 +75,7 @@ const Navbar = () => {
             );
         } else {
             return (
-                <a href="/login" className="nav-link text-success"><i className="bi bi-box-arrow-in-right"></i> Login</a>
+                <a href="/community/signin" className="nav-link text-success"><i className="bi bi-box-arrow-in-right"></i> Login</a>
             );
         }
     };
